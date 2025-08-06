@@ -62,6 +62,7 @@ export default function MusicPlayer() {
     if (audioRef.current) audioRef.current.playbackRate = speed;
   }, [speed]);
 
+  // Handle audio start and end and finding active lyric line
   const activeIndex =
     lyrics.findIndex(
       (line, i) =>
