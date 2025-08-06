@@ -1,6 +1,4 @@
-// components/HomeContent.tsx
-
-import MusicList from "../MusicList";
+import MusicPlayer from "../MusicPlayer";
 
 export default function HomeContent() {
   return (
@@ -12,7 +10,7 @@ export default function HomeContent() {
         </p>
       </div>
 
-      <MusicList />
+      <MusicPlayer />
     </main>
   );
 }
