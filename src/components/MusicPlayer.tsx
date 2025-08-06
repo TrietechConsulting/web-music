@@ -57,21 +57,19 @@ export default function MusicPlayer() {
     return () => audio.removeEventListener("timeupdate", updateTime);
   }, []);
 
+  // Handle playback speed changes
   useEffect(() => {
     if (audioRef.current) audioRef.current.playbackRate = speed;
   }, [speed]);
 
-  let activeIndex = 0;
-  for (let i = 0; i < lyrics.length; ++i) {
-    if (
-      currentTime >= lyrics[i].time &&
-      (i === lyrics.length - 1 || currentTime < lyrics[i + 1].time)
-    ) {
-      activeIndex = i;
-      break;
-    }
-  }
+  const activeIndex =
+    lyrics.findIndex(
+      (line, i) =>
+        currentTime >= line.time &&
+        (i === lyrics.length - 1 || currentTime < lyrics[i + 1].time)
+    ) ?? 0;
 
+  // Scroll to active lyric line
   useEffect(() => {
     if (lyrics.length === 0) return;
     const container = lyricsContainerRef.current;
@@ -142,16 +140,13 @@ export default function MusicPlayer() {
             key={i}
             id={`lyric-${i}`}
             className={`
-              transition-all duration-200 text-base
+              transition-all duration-200 text-base py-[0.35rem] px-0
               ${
                 i === activeIndex
                   ? "text-blue-600 font-semibold"
                   : "text-gray-600"
               }
             `}
-            style={{
-              padding: "0.35rem 0",
-            }}
           >
             {line.text}
           </p>
