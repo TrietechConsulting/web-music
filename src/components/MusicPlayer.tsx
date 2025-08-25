@@ -1,16 +1,7 @@
 "use client";
+import { Entity } from "@/generated/prisma";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
-
-const audioLists = [
-  {
-    name: "Jump",
-    src: "/music/jump.mp3",
-    cover: "/cover/jump.png",
-    singer: "Blackpink",
-    lyric: "/lrc/jump.lrc",
-  },
-];
 
 interface LyricLine {
   time: number;
@@ -33,21 +24,25 @@ function parseLrc(lrc: string): LyricLine[] {
     .filter(Boolean) as LyricLine[];
 }
 
-export default function MusicPlayer() {
-  const [currentIdx, setCurrentIdx] = useState(0);
+export default function MusicPlayer({ music }: { music: Entity }) {
   const [lyrics, setLyrics] = useState<LyricLine[]>([]);
   const [currentTime, setCurrentTime] = useState(0);
   const [speed, setSpeed] = useState(1);
   const audioRef = useRef<HTMLAudioElement>(null);
   const lyricsContainerRef = useRef<HTMLDivElement>(null);
 
-  const currentTrack = audioLists[currentIdx];
-
   useEffect(() => {
-    fetch(currentTrack.lyric)
-      .then((res) => res.text())
-      .then((text) => setLyrics(parseLrc(text)));
-  }, [currentTrack.lyric]);
+    if (music.lrcUrl) {
+      // Use the proxy API instead of direct fetch
+      fetch(`/api/lyrics?url=${encodeURIComponent(music.lrcUrl)}`)
+        .then((res) => res.text())
+        .then((text) => setLyrics(parseLrc(text)))
+        .catch((error) => {
+          console.error("Error fetching lyrics:", error);
+          setLyrics([]);
+        });
+    }
+  }, [music.lrcUrl]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -105,12 +100,7 @@ export default function MusicPlayer() {
                     flex flex-col space-y-4"
     >
       {/* Audio Player */}
-      <audio
-        ref={audioRef}
-        controls
-        className="w-full"
-        src={currentTrack.src}
-      />
+      <audio ref={audioRef} controls className="w-full" src={music.songUrl} />
 
       {/* Playback Speed Selector */}
       <div className="flex flex-wrap items-center gap-3 my-2">

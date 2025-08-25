@@ -1,6 +1,9 @@
-import MusicPlayer from "../MusicPlayer";
+import { prisma } from "@/utils/prisma";
+import MusicCard from "../MusicCard";
 
-export default function HomeContent() {
+export default async function HomeContent() {
+  const musics = await prisma.entity.findMany();
+
   return (
     <main className="px-6 py-8 max-w-3xl mx-auto">
       <div className="text-center mb-8">
@@ -9,8 +12,11 @@ export default function HomeContent() {
           Stream your favorite tracks with a clean minimal interface.
         </p>
       </div>
-
-      <MusicPlayer />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {musics?.map((music) => {
+          return <MusicCard key={music.id} {...music} />;
+        })}
+      </div>
     </main>
   );
 }
