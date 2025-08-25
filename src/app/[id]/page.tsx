@@ -1,7 +1,9 @@
 import Footer from "@/components/Footer";
+import MusicPlayer from "@/components/MusicPlayer";
 import Navbar from "@/components/Navbar";
 import { prisma } from "@/utils/prisma";
 import { MoveLeft } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default async function MusicPage({
@@ -13,7 +15,6 @@ export default async function MusicPage({
   const music = await prisma.entity.findUnique({
     where: { id: parseInt(id) },
   });
-  console.log("roby -> MusicPage -> music:", music);
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -26,6 +27,18 @@ export default async function MusicPage({
             <MoveLeft />
             <p>Back To Home</p>
           </Link>
+          <Image
+            src={music?.imageUrl || ""}
+            alt={music?.name || ""}
+            width={400}
+            height={400}
+            className="rounded-lg mx-auto"
+          />
+          <div className="flex flex-col items-center text-center gap-2">
+            <p className="text-xl">{music?.name}</p>
+            <p className="text-muted-foreground">{music?.description}</p>
+          </div>
+          {music && <MusicPlayer music={music} />}
         </main>
       </div>
       <Footer />
