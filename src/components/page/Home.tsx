@@ -3,7 +3,6 @@ import MusicCard from "../MusicCard";
 
 export default async function HomeContent() {
   const musics = await prisma.entity.findMany();
-  console.log("roby -> HomeContent -> musics:", musics);
 
   return (
     <main className="px-6 py-8 max-w-3xl mx-auto">
